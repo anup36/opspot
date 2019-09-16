@@ -1,0 +1,14 @@
+m-button--admin-actions {
+  display: inline-block;
+  position: relative;
+
+  > span.opspot-button-edit {
+    display: inline-block;
+  }
+
+  .opspot-dropdown-menu {
+    right: auto;
+    top: $opspot-padding * 3;
+    left: 0;
+  }
+}

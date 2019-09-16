@@ -1,0 +1,18 @@
+<?php
+/**
+ * Opspot i18n Provider
+ */
+
+namespace Opspot\Core\I18n;
+
+use Opspot\Core\Di\Provider;
+
+class I18nProvider extends Provider
+{
+    public function register()
+    {
+        $this->di->bind('I18n', function ($di) {
+            return new I18n();
+        }, [ 'useFactory' => true ]);
+    }
+}

@@ -1,0 +1,13 @@
+
+<div class="m-login">
+  <div>
+    <h3 i18n="@@OPSPOT__HOME__LOGIN__LOGIN">Login to Opspot</h3>
+    <opspot-form-login (done)="loggedin()" (doneRegistered)="registered()"></opspot-form-login>
+  </div>
+
+  <div>
+    <h3 i18n="@@M__COMMON__START_A_CHANNEL">Not on Opspot? Start a channel</h3>
+    <opspot-form-register [referrer]="referrer" (done)="registered()"></opspot-form-register>
+  </div>
+</div>
+

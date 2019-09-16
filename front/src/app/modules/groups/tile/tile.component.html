@@ -1,0 +1,33 @@
+<div class="m-groups--tile m-border" [class.m-groupTile--hasUpdates]="hasMarker">
+    
+  <div class="m-groups--tile-banner">
+    <div class="m-groups--tile-banner-img"
+        [ngStyle]="{'background-image': 'url(' + opspot.cdn_url + 'fs/v1/banners/' + entity.guid + '/fat/' + entity.icontime + ')'}"
+      >
+    </div>
+    <div class="opspot-banner-overlay"></div>
+  </div>
+  
+  <a [routerLink]="['/groups/profile', entity.guid]"  class="m-groups--tile-block">
+    <div class="avatar">
+      <img src="{{opspot.cdn_url}}fs/v1/avatars/{{entity.guid}}/large"/>
+    </div>
+    <div class="body">
+      <h3>{{entity.name}}</h3>
+      <span i18n="@@GROUPS__TILE__MEMBERS_COUNT"><b>{{entity['members:count'] | number}}</b> members</span>
+    </div>
+  </a>
+  
+  <div class="m-groups--tile-buttons">
+    <opspot-groups-join-button *ngIf="!entity['is:member']; else isMember" [group]="entity"></opspot-groups-join-button>
+    
+    <ng-template #isMember>
+      <button class="m-btn m-btn--action" [routerLink]="['/groups/profile', entity.guid]" i18n="@@GROUPS__TILE__OPEN_ACTION">
+        Open
+      </button>
+    </ng-template>
+
+    <m-safe-toggle *ngIf="session.isAdmin()" [(entity)]="entity"></m-safe-toggle>
+  </div>
+  
+</div>

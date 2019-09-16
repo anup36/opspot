@@ -1,0 +1,13 @@
+@import "defaults";
+/**
+ * Infinite scroll
+ */
+infinite-scroll{
+  text-align:center;
+  padding:$opspot-padding*2 0;
+
+  > div {
+    margin:auto;
+    display:block !important;
+  }
+}

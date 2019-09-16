@@ -1,0 +1,202 @@
+# Using v2.2 because v3+ is meant for swarm operations
+version: "2.2"
+
+services:
+  cassandra:
+    image: cassandra:3.11.1
+    environment:
+      - CASSANDRA_START_RPC=true
+      - MAX_HEAP_SIZE=256M
+      - HEAP_NEWSIZE=32M
+    networks:
+      - app
+    mem_limit: 1024MB
+    volumes:
+      - "./.data/cassandra:/var/lib/cassandra"
+    healthcheck:
+      test: "cqlsh -e 'DESC TABLE system.batches'"
+      retries: 10
+      timeout: 5s
+      interval: 15s
+
+  cockroachdb:
+    image: cockroachdb/cockroach
+    command: start --insecure
+    networks:
+        - app
+    volumes:
+      - ./.data/cockroachdb:/cockroach/cockroach-data
+    healthcheck:
+      test: "/cockroach/cockroach user --insecure --host=localhost:26257 ls"
+      retries: 5
+      timeout: 5s
+      interval: 15s
+
+  mongo:
+    image: mongo:3.4
+    networks:
+      - app
+
+  elasticsearch:
+    image: elasticsearch:5.6-alpine
+    mem_limit: 512MB # keep an eye
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    environment:
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+    networks:
+      - app
+    volumes:
+      - ./.data/elasticsearch:/usr/share/elasticsearch/data
+
+  redis:
+    image: redis:4.0-alpine
+    mem_limit: 100MB # keep an eye
+    networks:
+      - app
+    healthcheck:
+      timeout: 5s
+      interval: 5s
+      retries: 5
+      test:
+        - "CMD"
+        - "redis-cli"
+        - "ping"
+
+  rabbitmq:
+    image: rabbitmq:3.6-alpine
+    networks:
+      - app
+    healthcheck:
+      timeout: 5s
+      interval: 5s
+      retries: 5
+      test:
+        - "CMD"
+        - "rabbitmqctl"
+        - "status"
+    environment:
+      - RABBITMQ_ERLANG_COOKIE='secret_cookie'
+
+  php-fpm:
+    build:
+      context: ./engine
+      dockerfile: ./containers/php-fpm/Dockerfile.dev
+    mem_limit: 512MB
+    depends_on:
+      - cassandra
+      - cockroachdb
+      - mongo
+      - elasticsearch
+      - rabbitmq
+      - redis
+    networks:
+      - app
+    volumes:
+      ## The following is for development environments only. Comment out on production. ##
+      - "./front/:/var/www/Opspot/front"
+      - "./engine/:/var/www/Opspot/engine"
+      - "./errors/:/var/www/Opspot/errors"
+      - "./.dev/:/.dev/"
+
+  guidserver:
+    build:
+      context: ./engine
+      dockerfile: ./containers/php-guid/Dockerfile
+    networks:
+      - app
+    volumes:
+      ## The following is for development environments only. Comment out on production. ##
+      - "./engine/:/var/www/Opspot/engine"
+      - "./errors/:/var/www/Opspot/errors"
+      - "./.dev/:/.dev/"
+
+  runners:
+    build:
+      context: ./engine
+      dockerfile: ./containers/php-runners/Dockerfile
+    depends_on:
+      - cassandra
+      - mongo
+      - elasticsearch
+      - rabbitmq
+      - redis
+    networks:
+      - app
+    volumes:
+      - "./front/:/var/www/Opspot/front:cached"
+      - "./plugins/:/var/www/Opspot/plugins"
+      - "./languages/:/var/www/Opspot/languages"
+      - "./engine/:/var/www/Opspot/engine"
+      - "./errors/:/var/www/Opspot/errors"
+
+  nginx:
+    build:
+      context: ./containers/nginx
+      dockerfile: ./Dockerfile.dev
+    mem_limit: 512MB
+    depends_on:
+      - php-fpm
+    ports:
+      - "8080:80"
+    networks:
+      - app
+    volumes:
+      ## The following is for development environments only. Comment out on production. ##
+      - "./front/:/var/www/Opspot/front"
+
+  installer:
+    build:
+      context: ./engine
+      dockerfile: ./containers/installer/Dockerfile
+    networks:
+      - app
+    volumes:
+      - "./engine/:/var/www/Opspot/engine"
+      - "./errors/:/var/www/Opspot/errors"
+      - "./front/:/var/www/Opspot/front"
+      - "./.dev/:/.dev/"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      cassandra:
+        condition: service_healthy
+      cockroachdb:
+        condition: service_healthy
+     ## todo : mongo, elastic
+
+  front-build:
+    image: vnaad/opspot-front-base
+    networks:
+      - app
+    entrypoint: 
+      - sh
+      - -c
+      - "cd /var/www/Opspot/front && echo 'Building frontend, please wait...(this can take a long time)' && npm install && npm run postinstall && npm rebuild node-sass && npm run build-dev && touch /var/www/Opspot/front/dist/index.php"
+    volumes:
+      - "./front/:/var/www/Opspot/front"
+
+  sockets:
+    build:
+      context: ./sockets/containers/sockets
+      dockerfile: ./Dockerfile
+    ports:
+      - "3030:3030"
+    networks:
+      - app
+    depends_on:
+      - cassandra
+      - redis
+    entrypoint: 
+      - sh
+      - -c
+      - "cd /sockets && node build/index.js --PORT=3030 --CASSANDRA_KEYSPACE='opspot' --CASSANDRA_SERVERS='cassandra' --JWT_SECRET='keepsave-and-match-settings.php' --REDIS_HOST='redis' --REDIS_PORT=6379 --TWILIO_ID='AC96ea890adb1a883eede2c87401e1015c' --TWILIO_SECRET='7b472efc9c42e0e3bdc480b599dad997'"
+    volumes:
+      - "./sockets/:/sockets"
+
+networks:
+  app:
+    driver: "bridge"
+

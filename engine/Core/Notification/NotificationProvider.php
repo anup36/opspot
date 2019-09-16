@@ -1,0 +1,29 @@
+<?php
+/**
+ * Opspot Notification Provider
+ * @author Emi Balbuena
+ */
+
+namespace Opspot\Core\Notification;
+
+use Opspot\Core;
+use Opspot\Core\Di\Provider;
+
+class NotificationProvider extends Provider
+{
+    public function register()
+    {
+        $this->di->bind('Notification\Repository', function ($di) {
+            return new Repository();
+        });
+        $this->di->bind('Notification\Manager', function ($di) {
+            return new Manager();
+        });
+        $this->di->bind('Notification\Batches\Manager', function ($di) {
+            return new Batches\Manager();
+        });
+        $this->di->bind('Notification\UpdateMarkers\Manager', function ($di) {
+            return new UpdateMarkers\Manager();
+        });
+    }
+}

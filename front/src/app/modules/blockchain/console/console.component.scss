@@ -1,0 +1,67 @@
+.m-blockchain--options {
+  max-width:900px;
+  background: #FFF;
+
+  .m-blockchain--options-wallet {
+    width: 100%;
+    padding: $opspot-padding * 2;
+    box-sizing: border-box;
+
+    h3{
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 24px;
+    }
+  }
+
+  .m-blockchain--options--section {
+    margin-bottom: ($opspot-padding * 2) !important;
+
+    &:last-child {
+      margin-bottom: 0 !important;
+    }
+  }
+
+  .m-blockchain--options-wallet--setup {
+    form {
+      label {
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        word-spacing: 4px;
+      }
+
+      input {
+        width: 100%;
+        margin: ($opspot-padding * 2) 0;
+        padding: $opspot-padding * 2;
+        font-size: 16px;
+      }
+    }
+    p {
+      line-height: 18px;
+    }
+  }
+
+  .m-blockchain--options--local-wallets--refresh {
+    cursor: pointer;
+    color: #cccccc !important;
+    vertical-align: text-top;
+    font-size: 1em;
+    position: relative;
+    top: 0.1em;
+  }
+
+  .m-blockchain--options--wallet-selector {
+    margin: ($opspot-padding * 2) 0;
+  }
+
+  .m-error{
+    padding: $opspot-padding * 2;
+    letter-spacing: 2px;
+    font-size: 14px;
+    font-weight: 300;
+    margin: ($opspot-padding * 2) 0;
+    border-radius: 2px;
+  }
+}

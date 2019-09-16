@@ -1,0 +1,37 @@
+<div class="mdl-card__title opspot-media-albums-card"
+	style="height:200px; background:#333" >
+
+	<div *ngIf="entity.images" class="opspot-album-tiles tiles-{{entity.images.length}}">
+		<a class=""
+			 *ngFor="let image of entity.images"
+			 [routerLink]="['/media', image]">
+			<img src="fs/v1/thumbnail/{{image}}/medium" />
+		</a>
+	</div>
+
+</div>
+
+<!-- Owner block -->
+<div class="mdl-card__supporting-text mdl-color-text--grey-600 m-title-block" *ngIf="entity.ownerObj && entity.ownerObj.username">
+
+		<a [routerLink]="['/media', entity.guid]" class="mdl-color-text--blue-grey-700">
+			<strong>{{ entity.title }}</strong>
+		</a>
+
+		<div class="m-inline-owner-block">
+			<a [routerLink]="['/', entity.ownerObj.username]" class="mdl-color-text--blue-grey-300">
+				<img src="/icon/{{entity.ownerObj.guid}}/small/{{entity.ownerObj.icontime}}" class="mdl-shadow--2dp"/>
+				{{entity.ownerObj.username}}
+			</a>
+			<span>{{ entity.time_created * 1000 | date:'mediumDate' }}</span>
+		</div>
+
+</div>
+
+<div class="mdl-card__supporting-text mdl-color--blue-grey-50 m-action-tabs">
+	<opspot-button-thumbs-up [object]="entity"></opspot-button-thumbs-up>
+	<opspot-button-thumbs-down [object]="entity"></opspot-button-thumbs-down>
+	<opspot-button-comment [object]="entity" [routerLink]="['/media', entity.guid]"></opspot-button-comment>
+	<opspot-button-remind [object]="entity"></opspot-button-remind>
+	<opspot-button-feature [object]="entity" *ngIf="session.isAdmin()"></opspot-button-feature>
+</div>

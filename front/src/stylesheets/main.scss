@@ -1,0 +1,242 @@
+@import 'defaults';
+@import 'fonts';
+
+h1,h2,h3,h4{
+  font-family:'Roboto';
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+h1{
+  font-weight:300;
+}
+
+p {
+  word-wrap: break-word;
+}
+
+
+.m-noshadow{
+  box-shadow:0 0 0 !important;
+}
+
+.m-border {
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+}
+
+opspot-topbar{
+
+  .opspot-logo{
+
+    height: 64px;
+    box-sizing: border-box;
+    padding: $opspot-padding 0 $opspot-padding*2;
+    width: 100px;
+    margin-right: 24px;
+
+    img{
+      height:100%;
+    }
+  }
+
+  opspot-topbar-navigation{
+    nav{
+      display:flex;
+      flex-direction:row;
+
+      a {
+        text-decoration:none;
+        display:flex;
+        align-items:center;
+        padding-right: $opspot-padding;
+        position: relative;
+
+        .counter{
+          padding:$opspot-padding/2;
+        }
+      }
+
+    }
+  }
+
+  .opspot-account{
+    img{
+      height:42px;
+      max-height: 42px;
+      border-radius: 50%;
+    }
+  }
+
+}
+
+@media screen and (max-width: $max-mobile){
+  opspot-topbar {
+    .opspot-logo{
+      display: block;
+      position: fixed;
+      width: 75px;
+      height: 30px;
+      left: calc(50vw - 35.5px);
+      /* z-index: 1; */
+      padding: 0;
+      padding-bottom: 2px;
+    }
+    opspot-topbar-navigation{
+      nav a:first-of-type{
+          //display:none;
+      }
+      nav a .counter{
+        display:none;
+      }
+    }
+    .opspot-account img{
+        height:28px;
+    }
+  }
+}
+
+@media screen and (max-width: 320px){
+  opspot-topbar opspot-topbar-navigation nav{
+      display:none;
+  }
+  opspot-topbar opspot-search-bar{
+      display:none;
+  }
+}
+
+.opspot-login-box{
+  padding:$opspot-padding * 2;
+  margin:auto;
+  min-height: 100px;
+}
+
+.mdl-tabs__tab.is-active{
+  border-bottom:2px solid $opspot-amber;
+}
+
+.mdl-textfield__label{
+  .material-icons{
+    line-height: 0;
+    vertical-align: middle;
+  }
+}
+.mdl-card__supporting-text{
+  word-wrap: break-word;
+
+  textarea{
+    color: rgba(0,0,0,.87);
+    font-size: 13px;
+    line-height: 18px;
+    resize:none;
+  }
+}
+
+.mdl-shadow--2dp {
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,.07),0 3px 1px -2px rgba(0,0,0,.1),0 1px 5px 0 rgba(0,0,0,.07);
+}
+.mdl-shadow--4dp {
+  box-shadow: 0 4px 4px 0 rgba(0,0,0,.07),0 3px 1px -2px rgba(0,0,0,.1),0 1px 5px 0 rgba(0,0,0,.07);
+}
+
+.coming-soon{
+  section {
+    height: 300px;
+    align-items: center;
+    -webkit-align-items: center;
+    justify-content: center;
+    display: flex;
+    padding: 55px;
+    text-transform: uppercase;
+    font-weight: 100;
+    font-size: 41px;
+  }
+}
+
+.opspot-spacer{
+  height:$opspot-padding;
+  width:$opspot-padding;
+}
+.opspot-spacer-2x{
+  height:$opspot-padding*2;
+  width:$opspot-padding*2;
+}
+
+
+.opspot-block {
+  display: flex;
+  flex-direction: row;
+
+  .opspot-avatar{
+    margin-right:$opspot-margin;
+  }
+  .opspot-body{
+    flex:1;
+  }
+}
+
+.opspot-error{
+  display: inline-block;
+  vertical-align: middle;
+  padding: 8px;
+  font-size: 13px;
+  border-radius: 3px;
+}
+
+.opspot-reset-password-title{
+  font-size: 16px;
+  text-align: center;
+  padding: 20px;
+}
+
+.opspot-reset-password-link{
+  padding: 20px 0px;
+}
+
+textarea {
+   font-family: inherit;
+   font-size: inherit;
+}
+
+.m-isomorphic-link {
+  color: inherit;
+  text-decoration: inherit;
+  font-weight: inherit;
+}
+
+.mdl-color--grey-100 {
+  background-color: rgba(248,248,248,1) !important;
+}
+
+blockquote { quotes: ''; }
+blockquote:before { content: '\201C'; }
+blockquote:after { content: '\201D'; }
+
+@import '../app/**/*';
+@import '../shims/smartbanner';
+@import 'core/*';
+
+@import 'components/*';
+@import 'controllers/*';
+
+@import 'overrides.scss';
+
+@import 'ionicons.scss';
+
+/**
+ * For modern browsers
+ * 1. The space content is one way to avoid an Opera bug when the
+ *    contenteditable attribute is included anywhere else in the document.
+ *    Otherwise it causes space to appear at the top and bottom of elements
+ *    that are clearfixed.
+ * 2. The use of `table` rather than `block` is only necessary if using
+ *    `:before` to contain the top-margins of child elements.
+ */
+.cf:before,
+.cf:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.cf:after {
+    clear: both;
+}

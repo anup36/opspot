@@ -1,0 +1,32 @@
+@import "defaults";
+
+.m-search-inline{
+
+  input{
+    padding:$opspot-padding * 1.5;
+    font-size:14px;
+    width:100%;
+  }
+
+  .m-helper{
+    font-size:11px;
+    padding:$opspot-padding 0;
+    margin:0;
+  }
+
+  .m-search-inline-list{
+    padding: 0;
+    margin-bottom: 16px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .m-search-inline-item{
+    padding:$opspot-padding $opspot-padding *2;
+    cursor:pointer;
+
+    &:hover{
+      background:#EEE;
+    }
+  }
+}

@@ -1,0 +1,10 @@
+m-group--members-module {
+  > .mdl-card__title[href] {
+    cursor: pointer;
+  }
+
+  .opspot-group-sidebar-loader {
+    margin-left: $opspot-margin*2;
+  }
+
+}

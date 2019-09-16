@@ -1,0 +1,9 @@
+suites:
+  main:
+    namespace: Opspot
+    psr4_prefix: Opspot
+    spec_prefix: Spec
+    src_path: engine
+    spec_path: ./
+
+bootstrap: Spec/bootstrap.php

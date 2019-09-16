@@ -1,0 +1,37 @@
+<div class="m-channels--tile m-border">
+
+  <div class="m-channels--tile-banner">
+    <div class="m-channels--tile-banner-img"
+        [ngStyle]="{'background-image': 'url(' + opspot.cdn_url + 'fs/v1/banners/' + entity.guid + '/fat/' + entity.icontime + ')'}"
+      >
+    </div>
+    <div class="opspot-banner-overlay"></div>
+  </div>
+  
+  <a [routerLink]="['/', entity.username]" class="m-channels--tile-block">
+    <div class="avatar" [ngStyle]="{ 'background-image': 'url(' + opspot.cdn_url + 'icon/' + entity.guid + '/large/'+ entity.icontime +')' }">
+    </div>
+    <div class="body">
+      <h3>{{entity.name}}</h3>
+      <span>@{{entity.username}}</span>
+      <m-channel--badges class="m-channel--badges-activity" [user]="entity" badges="[ 'verified' ]"></m-channel--badges>
+
+      <div class="m-usercard-bio" *ngIf="false">
+        <div class="m-usercard-bio-brief" [hidden]="!entity.briefdescription">
+          {{entity.briefdescription}}
+        </div>
+      </div>
+    </div>
+  </a>
+  
+  <div class="m-channels--tile-buttons">
+    <opspot-button-subscribe [user]="entity" *ngIf="entity.guid != session.getLoggedInUser().guid"></opspot-button-subscribe>
+    <opspot-button-feature [object]="entity" *ngIf="session.isAdmin()"></opspot-button-feature>
+    <opspot-button-boost [object]="entity" *ngIf="entity.guid == session.getLoggedInUser().guid"></opspot-button-boost>
+    <div class="opspot-usercard-buttons" [ngClass]="{ 'has-feature-button': session.isAdmin() }">
+      <ng-content select="[buttons]"></ng-content>
+    </div>
+    <m-safe-toggle *ngIf="session.isAdmin()" [(entity)]="entity"></m-safe-toggle>
+  </div>
+  
+</div>

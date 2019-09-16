@@ -1,0 +1,71 @@
+<?php
+
+/**
+ * Opspot Entities Delete action
+ *
+ * @author Mark
+ */
+
+namespace Opspot\Core\Entities\Actions;
+
+use Opspot\Core\Di\Di;
+use Opspot\Core\Events\Dispatcher;
+
+class Delete
+{
+    /** @var Dispatcher */
+    protected $eventsDispatcher;
+
+    /** @var mixed */
+    protected $entity;
+
+    /**
+     * Save constructor.
+     * @param null $eventsDispatcher
+     */
+    public function __construct(
+        $eventsDispatcher = null
+    )
+    {
+        $this->eventsDispatcher = $eventsDispatcher ?: Di::_()->get('EventsDispatcher');
+    }
+
+    /**
+     * Sets the entity
+     * @param mixed $entity
+     * @return Save
+     */
+    public function setEntity($entity)
+    {
+        $this->entity = $entity;
+        return $this;
+    }
+
+    /**
+     * Delete the entity
+     * @param mixed ...$args
+     * @return bool
+     * @throws \Opspot\Exceptions\StopEventException
+     */
+    public function delete(...$args)
+    {
+        if (!$this->entity) {
+            return false;
+        }
+
+        //// DELETES ARE SCARY SO NO FALLBACK?
+        //if (method_exists($this->entity, 'delete')) {
+        //    return $this->entity->delete(...$args);
+        //}
+
+        $namespace = $this->entity->type;
+
+        if ($this->entity->subtype) {
+            $namespace .= ":{$this->entity->subtype}";
+        }
+
+        return $this->eventsDispatcher->trigger('entity:delete', $namespace, [
+            'entity' => $this->entity,
+        ], false);
+    }
+}

@@ -1,0 +1,83 @@
+<?php
+
+namespace Opspot\Controllers\Cli;
+
+use Opspot\Cli;
+use Opspot\Core;
+use Opspot\Entities;
+use Opspot\Interfaces;
+
+class Analytics extends Cli\Controller implements Interfaces\CliControllerInterface
+{
+    private $start;
+    private $elasticsearch;
+
+    public function help($command = null)
+    {
+        $this->out($command);
+        switch ($command) {
+            case 'sync_activeUsers':
+                $this->out('Indexes user activity by guid and counts per day');
+                $this->out('--from={timestamp} the day to start counting. Default is yesterday at midnight');
+                $$his->out('--to={timestamp} the day to stop counting. Default is yesterday at midnight');
+                $this->out('--rangeOffset={number of days} the number of days to look back into the past. Default is 7');
+                $this->out('--mode={silent | notify} silent mode does not send emails when running batches to re-index. Notify sends the notifications. Default is notify');
+                break;
+            case 'counts':
+                $this->out('Prints the counts of a user');
+                $this->out('--from={timestamp in milliseconds} the day to start count. Default is yesterday');
+                $this->out('--guid={user guid} REQUIRED the user to aggregate');
+                // no break
+            default:
+                $this->out('Syntax usage: cli analytics <type>');
+                $this->out('Available types: sync_activeUsers, counts');
+                $this->out('Command specific help: help analytics <type>');
+        }
+    }
+
+    public function exec()
+    {
+    }
+
+    public function sync_activeUsers()
+    {
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
+
+        $from = (strtotime('midnight', $this->getOpt('from')) ?: strtotime('midnight yesterday'));
+        $to = (strtotime('midnight', $this->getOpt('to')) ?: strtotime('midnight yesterday'));
+        $rangeOffset = getopt('rangeOffset') ?: 7;
+        $mode = strtolower($this->getOpt('mode')) ?: 'notify';
+        $this->out('Collecting user activity');
+        $this->out("Running in {$mode} mode");
+        while ($from <= $to) {
+            $this->out('Syncing for '.gmdate('c', $from));
+            $manager = new Core\Analytics\UserStates\Manager();
+            $manager->setReferenceDate($from)
+                ->setRangeOffset($rangeOffset)
+                ->sync();
+            if ($mode === 'notify') {
+                $this->out('Sending notifications');
+                $manager->emitStateChanges();
+            }
+            $from = strtotime('+1 day', $from);
+        }
+        $this->out('Completed syncing user activity');
+    }
+
+    public function counts()
+    {
+        $interval = $this->getOpt('interval') ?: 'day';
+        $from = $this->getOpt('from') ?: (strtotime('-24 hours') * 1000);
+        $user = new Entities\User();
+        $user->guid = $this->getOpt('guid');
+
+        $manager = new Core\Analytics\Manager();
+        $manager->setUser($user)
+            ->setFrom($from)
+            ->setInterval($interval);
+        $result = $manager->getCounts();
+
+        var_dump($result);
+    }
+}

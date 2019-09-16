@@ -1,0 +1,29 @@
+.m-media-recommended--items {
+  margin-bottom: $opspot-padding;
+
+  opspot-card {
+    position: relative;
+
+    > :first-child {
+      margin-bottom: $opspot-padding * 2;
+    }
+
+    &:last-child {
+      > :first-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  opspot-card > * {
+    display: block;
+  }
+
+  .opspot-video-thumbnail {
+    height: 120px !important;
+  }
+
+  .m-action-tabs {
+    display: none;
+  }
+}

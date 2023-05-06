@@ -27,7 +27,7 @@
     "@angular/router": "~7.2.0",
     "angular-text-input-autocomplete": "^0.3.0",
     "bn.js": "^4.11.8",
-    "braintree-web": "3.41.0",
+    "braintree-web": "3.93.0",
     "core-js": "~2.6.2",
     "ethjs": "~0.4.0",
     "ethjs-account": "^0.1.4",
